@@ -1,5 +1,7 @@
 package com.threadhive.controllers;
 
+import java.util.ArrayList;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -7,8 +9,12 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.threadhive.dtos.UserDto;
 import com.threadhive.models.User;
 import com.threadhive.services.interfaces.UserService;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+
 
 
 
@@ -22,12 +28,20 @@ public class UserController {
     
     @GetMapping("/users")
     public ResponseEntity<?> getAllUsers() {
-        var users = userService.getAllUsers();
+        var returnData = new ArrayList<UserDto>();
 
-        if (users == null || users.isEmpty()) {
+        for (User user: userService.getAllUsers()) {
+            returnData.add(new UserDto(
+                user.getId(), user.getUsername(), user.getEmail(), user.getName(), 
+                user.getProfilePhoto(), user.getBackGroundPhoto(),
+                user.getCreatedDate(), user.getLastModifiedDate()
+            ));
+        }
+
+        if (returnData == null || returnData.isEmpty()) {
             return ResponseEntity.notFound().build();
         } else {
-            return ResponseEntity.status(HttpStatus.FOUND).body(users);
+            return ResponseEntity.status(HttpStatus.FOUND).body(returnData);
         }
     }
 
@@ -38,6 +52,11 @@ public class UserController {
         } catch (Exception ex) {
             return ResponseEntity.badRequest().body("Unknown error occured");
         }
+    }
+
+    @PutMapping("users//{id}")
+    public String putMethodName(@PathVariable String id, @RequestBody String entity) {        
+        return entity;
     }
     
     
