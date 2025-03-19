@@ -31,5 +31,3 @@ Thread Hive is a modern **social media platform** built with **Spring Boot (back
 - **Real-World Project** – Ideal for learning and showcasing **full-stack development** skills.
 
 📌 **Work in progress – new features coming soon! Stay tuned.** 🚀
-
-Let me know if you’d like any refinements! 😊
