@@ -7,12 +7,12 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import com.threadhive.dtos.UserDto;
 import com.threadhive.exceptions.AuthenticationException;
 import com.threadhive.exceptions.DuplicateUserException;
+import com.threadhive.exceptions.InvalidInputException;
 import com.threadhive.exceptions.UserNotFoundException;
 import com.threadhive.models.User;
 import com.threadhive.repositories.UserRepository;
@@ -22,6 +22,8 @@ import com.threadhive.services.interfaces.UserService;
 public class UserServiceImpl implements UserService {
     @Autowired
     UserRepository userRepository;
+
+    public final String emailRegex = "^[a-zA-Z0-9_+&*-]+(?:\\.[a-zA-Z0-9_+&*-]+)*@(?:[a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,7}$";
 
     @Override
     public List<UserDto> getAllUsers() {
@@ -43,62 +45,49 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public ResponseEntity<?> createUser(User user) {
-
-        Map<String, String> errors = new HashMap<>();
+    public UserDto createUser(User user) {
 
         try {
 
+            Map<String, String> errors = new HashMap<>();
+
+            //validate username
             if (user.getUsername() == null || user.getUsername().trim().isEmpty()) {
                 errors.put("username", "Username is required");
-            } else {
-                if (user.getUsername().startsWith(".") || user.getUsername().endsWith(".") || 
-                    user.getUsername().contains("..")) {
-                        errors.put("username", "Username cannot start or end with a period or contain consecutive periods");
-                }
-    
-                if (!user.getUsername().matches("^[a-zA-Z0-9._]+$")) {
-                    errors.put("username", "Username can only contain letters, numbers, periods and underscores");
-                }
-    
-                if (user.getUsername().length() < 3 || user.getUsername().length() > 30) {
-                    errors.put("username", "Username must be between 3 and 30 characters");
-                }
-    
-                if (user.getEmail() == null || user.getEmail().trim().isEmpty()) {
-                    errors.put("email", "Email is required");
-                } else {
-                    String emailRegex = "^[a-zA-Z0-9_+&*-]+(?:\\.[a-zA-Z0-9_+&*-]+)*@(?:[a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,7}$";
-                    if (!user.getEmail().matches(emailRegex)) {
-                        errors.put("email", "Please provide a valid email address");
-                    }
-                }
-            }
-    
-            if (!errors.isEmpty()) {
-                
-                return ResponseEntity.badRequest().body(errors);
+            } else if (user.getUsername().length() < 3 || user.getUsername().length() > 30) {
+                errors.put("username", "Username must be between 3 and 30 characters");
+            } else if (user.getUsername().startsWith(".") || user.getUsername().endsWith(".") || 
+                user.getUsername().contains("..") || !user.getUsername().matches("^[a-zA-Z0-9._]+$")) {
+                errors.put("username", "Invalid username. Use only letters, numbers, periods, and underscores without consecutive or leading/trailing periods.");
             }
 
-            if (userRepository.existsByEmail(user.getEmail()))
-                throw new DuplicateUserException("Email already in use. Please use a different one.");
+            //validate email
+            if (user.getEmail() == null || user.getEmail().trim().isEmpty()) {
+                errors.put("email", "Email is required");
+            } else if (!user.getEmail().matches(this.emailRegex)) {
+                errors.put("email", "Please provide a valid email address");
+            }
+        
+            if (!errors.isEmpty()) throw new InvalidInputException("Invalid Input", errors);
 
+            Map<String, String> errors2 = new HashMap<>();
+
+            if (userRepository.existsByEmail(user.getEmail())) 
+                errors2.put("email", "Email already in use. Please use a different one");  
             
             if (userRepository.existsByUsername(user.getUsername()))
-                throw new DuplicateUserException("Username unavailable. Please choose another.");
+                errors2.put("username", "Username unavailable. Please choose another");
+
+            if (!errors2.isEmpty()) throw new DuplicateUserException("Duplicate Data", errors2);
 
 
-            // User newUser = userRepository.save(user);
-            // return new UserDto(
-            //     newUser.getId(),
-            //     newUser.getUsername(),
-            //     newUser.getEmail(),
-            //     newUser.getName(),
-            //     newUser.getProfilePhoto(),
-            //     newUser.getBackGroundPhoto()
-            // );
+            User newUser = userRepository.save(user);
 
-            return null;
+            return new UserDto(
+                newUser.getId(), newUser.getUsername(), newUser.getEmail(),
+                newUser.getName(), newUser.getProfilePhoto(), newUser.getBackGroundPhoto()
+            );
+
         } catch (Exception ex) {
             throw ex;
         }
@@ -109,21 +98,38 @@ public class UserServiceImpl implements UserService {
         try {
 
             User foundUser = userRepository.findById(userId).orElseThrow(
-                () -> new UserNotFoundException("User with ID " + userId + " not found")
+                () -> new UserNotFoundException("Server Error", new HashMap<>(Map.of("id", "User not Found")))
             );
 
-            if (updateRequest.getPassword().equals(foundUser.getPassword()))
-                throw new AuthenticationException("Invalid password!");
+            if (!updateRequest.getPassword().equals(foundUser.getPassword()))
+                throw new AuthenticationException("Unauthorised", new HashMap<>(Map.of("password", "Invalid Password")));
 
-            if (updateRequest.getEmail() != null && updateRequest.getEmail() != foundUser.getEmail() 
-                && !userRepository.existsByEmail(updateRequest.getEmail())) {
-                    throw new DuplicateUserException("Email already registered with another user");
+            Map<String, String> errors = new HashMap<>();
+            Map<String, String> errors2 = new HashMap<>();
+
+            if (updateRequest.getEmail() != null && updateRequest.getEmail() != foundUser.getEmail()) {
+                if (!updateRequest.getEmail().matches(this.emailRegex)) {
+                    errors.put("email", "Please provide a valid email address");
+                } else if (userRepository.existsByEmail(updateRequest.getEmail())) {
+                    errors2.put("email", "Email already registered with another user");
+                }
             }
 
-            if (updateRequest.getUsername() != null && updateRequest.getUsername() != foundUser.getUsername() 
-                && !userRepository.existsByUsername(updateRequest.getUsername())) {
-                    throw new DuplicateUserException("Username Unavailable");
+            if (updateRequest.getUsername() != null && updateRequest.getUsername() != foundUser.getUsername()) {
+                if (updateRequest.getUsername().length() < 3 || updateRequest.getUsername().length() > 30) {
+                    errors.put("username", "Username must be between 3 and 30 characters");
+                } else if (updateRequest.getUsername().startsWith(".") || updateRequest.getUsername().endsWith(".") || 
+                updateRequest.getUsername().contains("..") || !updateRequest.getUsername().matches("^[a-zA-Z0-9._]+$")) {
+                    errors.put("username", "Invalid username. Use only letters, numbers, periods, and underscores without consecutive or leading/trailing periods.");
+                } else if (userRepository.existsByUsername(updateRequest.getUsername())) {
+                    errors2.put("username", "Username Unavailable");
+                }
             }
+
+            if (!errors.isEmpty()) throw new InvalidInputException("Invalid Input", errors);
+            if (!errors2.isEmpty()) throw new DuplicateUserException("Duplicate Data", errors2);
+
+
 
             if (updateRequest.getUsername() != null) {
                 foundUser.setUsername(updateRequest.getUsername());

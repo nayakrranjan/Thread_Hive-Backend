@@ -3,15 +3,15 @@ package com.threadhive.exceptions;
 import java.util.HashMap;
 import java.util.Map;
 
-public class AuthenticationException extends RuntimeException {
+public class InvalidInputException extends RuntimeException {
     private Map<String, String> errors;
-
-    public AuthenticationException(String message) {
+    
+    public InvalidInputException(String message) {
         super(message);
         this.errors = new HashMap<>();
     }
 
-    public AuthenticationException(String message, Map<String, String> errors) {
+    public InvalidInputException(String message, Map<String, String> errors) {
         super(message);
         this.errors = errors;
     }

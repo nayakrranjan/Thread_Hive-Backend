@@ -1,12 +1,9 @@
 package com.threadhive.controllers;
 
-import java.util.HashMap;
-import java.util.Map;
 import java.util.UUID;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -39,11 +36,11 @@ public class UserController {
     }
 
     @PostMapping("/users")
-    public ResponseEntity<?> createUser(@Valid @RequestBody User user, BindingResult result) {
+    public ResponseEntity<?> createUser(@Valid @RequestBody User user) {
         return new ResponseEntity<>(userService.createUser(user), HttpStatus.CREATED);
     }
 
-    @PutMapping("/users/{id}")
+    @PutMapping("/users/{userId}")
     public ResponseEntity<?> updateUser(@PathVariable UUID userId, @Valid @RequestBody User user) throws Exception {
         return new ResponseEntity<>(userService.updateUser(userId, user), HttpStatus.OK);
     }

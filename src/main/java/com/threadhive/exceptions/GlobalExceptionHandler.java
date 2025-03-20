@@ -1,6 +1,5 @@
 package com.threadhive.exceptions;
 
-import java.util.List;
 import java.util.Map;
 
 import org.springframework.http.HttpStatus;
@@ -20,20 +19,22 @@ public class GlobalExceptionHandler {
     @NoArgsConstructor
     public static class ApiResponse<T> {
         private boolean success;
+        private int statusCode;
+        private String status;
         private String message;
         private T data;
-        private Map<String, String> errors;
-        private int statusCode;
+        private Map<String, String> errors;  
     }
 
     @ExceptionHandler(UserNotFoundException.class)
     public ResponseEntity<ApiResponse<Object>> handleUserNotFoundException(UserNotFoundException ex) {
         ApiResponse<Object> response = new ApiResponse<>(
             false,
+            HttpStatus.NOT_FOUND.value(),
+            "NOT FOUND",
             ex.getMessage(),
             null,
-            null,
-            HttpStatus.NOT_FOUND.value()
+            ex.getErrors()
         );
 
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
@@ -44,10 +45,11 @@ public class GlobalExceptionHandler {
         
         ApiResponse<Object> response = new ApiResponse<>(
             false,
+            HttpStatus.UNAUTHORIZED.value(),
+            "UNAUTHORIZED",
             ex.getMessage(),
             null,
-            null,
-            HttpStatus.BAD_REQUEST.value()
+            ex.getErrors()
         );
 
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
@@ -58,10 +60,26 @@ public class GlobalExceptionHandler {
 
         ApiResponse<Object> response = new ApiResponse<>(
             false,
+            HttpStatus.CONFLICT.value(),
+            "DUPLICATE USER",
             ex.getMessage(),
             null,
+            ex.getErrors()
+        );
+
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(response);
+    }
+
+    @ExceptionHandler(InvalidInputException.class)
+    public ResponseEntity<ApiResponse<Object>> handleInvalidInputException(InvalidInputException ex) {
+
+        ApiResponse<Object> response = new ApiResponse<>(
+            false,
+            HttpStatus.BAD_REQUEST.value(),
+            "BAD REQUEST",
+            ex.getMessage(),
             null,
-            HttpStatus.CONFLICT.value()
+            ex.getErrors()
         );
 
         return ResponseEntity.status(HttpStatus.CONFLICT).body(response);
