@@ -1,6 +1,7 @@
 package com.threadhive.models;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.*;
 import lombok.*;
 import java.sql.Timestamp;
 import java.util.UUID;
@@ -14,10 +15,15 @@ public class User {
     @GeneratedValue(strategy = GenerationType.AUTO)  // Auto-generates UUID
     private UUID id;
 
-    @Column(nullable = false, unique = true, length = 50)  // Ensures unique usernames
+    @Column(nullable = false, unique = true, length = 50)
+    @NotBlank(message = "Username is required")
+    @Size(min = 3, max = 30, message = "Username must be between 3 and 30 characters")
+    @Pattern(regexp = "^[a-zA-Z0-9._]+$", message = "Username can only contain letters, numbers, periods and underscores")
     private String username;
 
-    @Column(nullable = false, unique = true)  // Ensures unique emails
+    @Column(nullable = false, unique = true)
+    @NotBlank(message = "Email is required")
+    @Email(message = "Please provide a valid email address")
     private String email;
 
     @Column(nullable = false)  // Password should not be null

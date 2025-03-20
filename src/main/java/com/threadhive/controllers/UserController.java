@@ -1,7 +1,12 @@
 package com.threadhive.controllers;
 
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -10,17 +15,19 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.threadhive.models.User;
+import com.threadhive.repositories.UserRepository;
 import com.threadhive.services.interfaces.UserService;
 
-
-
+import jakarta.validation.Valid;
 
 @RestController
 public class UserController {
     UserService userService;
+    UserRepository userRepository;
 
-    UserController(UserService userService) {
+    UserController(UserService userService, UserRepository userRepository) {
         this.userService = userService;
+        this.userRepository = userRepository;
     }
     
     @GetMapping("/users")
@@ -32,17 +39,13 @@ public class UserController {
     }
 
     @PostMapping("/users")
-    public ResponseEntity<?> createUser(@RequestBody User user) {
-        try {
-            return new ResponseEntity<>(userService.createUser(user), HttpStatus.CREATED);
-        } catch (Exception ex) {
-            return ResponseEntity.badRequest().body("Unknown error occured");
-        }
+    public ResponseEntity<?> createUser(@Valid @RequestBody User user, BindingResult result) {
+        return new ResponseEntity<>(userService.createUser(user), HttpStatus.CREATED);
     }
 
-    @PutMapping("users//{id}")
-    public String putMethodName(@PathVariable String id, @RequestBody String entity) {        
-        return entity;
+    @PutMapping("/users/{id}")
+    public ResponseEntity<?> updateUser(@PathVariable UUID userId, @Valid @RequestBody User user) throws Exception {
+        return new ResponseEntity<>(userService.updateUser(userId, user), HttpStatus.OK);
     }
     
     

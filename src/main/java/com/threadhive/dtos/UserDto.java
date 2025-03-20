@@ -1,9 +1,12 @@
 package com.threadhive.dtos;
 
-import java.sql.Timestamp;
 import java.util.UUID;
 
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
 
 @Getter @Setter @NoArgsConstructor @AllArgsConstructor @ToString
 public class UserDto {
@@ -13,6 +16,6 @@ public class UserDto {
     private String name;
     private String profilePhoto;
     private String backGroundPhoto;
-    private Timestamp createdDate;
-    private Timestamp lastModifiedDate;
+    // private Timestamp createdDate;
+    // private Timestamp lastModifiedDate;
 }
