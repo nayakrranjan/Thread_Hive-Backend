@@ -1,9 +1,11 @@
 package com.threadhive.exceptions;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
@@ -80,6 +82,26 @@ public class GlobalExceptionHandler {
             ex.getMessage(),
             null,
             ex.getErrors()
+        );
+
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(response);
+    }
+
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity<ApiResponse<Object>> handleMethodArgumentNotValidException(MethodArgumentNotValidException ex) {
+
+        Map<String, String> error = new HashMap<>();
+        for (var exc: ex.getFieldErrors()) {
+            error.put(exc.getField(), exc.getDefaultMessage());            
+        }
+
+        ApiResponse<Object> response = new ApiResponse<>(
+            false,
+            HttpStatus.BAD_REQUEST.value(),
+            "BAD REQUEST",
+            "Invalid Data",
+            null,
+            error
         );
 
         return ResponseEntity.status(HttpStatus.CONFLICT).body(response);

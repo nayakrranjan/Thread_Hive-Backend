@@ -6,7 +6,7 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.threadhive.dtos.UserDto;
@@ -17,11 +17,18 @@ import com.threadhive.exceptions.UserNotFoundException;
 import com.threadhive.models.User;
 import com.threadhive.repositories.UserRepository;
 import com.threadhive.services.interfaces.UserService;
+import com.threadhive.config.SecurityConfig;
 
 @Service
 public class UserServiceImpl implements UserService {
-    @Autowired
+    
     UserRepository userRepository;
+    PasswordEncoder passwordEncoder;
+
+    UserServiceImpl(UserRepository userRepository, PasswordEncoder passwordEncoder) {
+        this.userRepository = userRepository;
+        this.passwordEncoder = passwordEncoder;
+    }
 
     public final String emailRegex = "^[a-zA-Z0-9_+&*-]+(?:\\.[a-zA-Z0-9_+&*-]+)*@(?:[a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,7}$";
 
@@ -80,6 +87,7 @@ public class UserServiceImpl implements UserService {
 
             if (!errors2.isEmpty()) throw new DuplicateUserException("Duplicate Data", errors2);
 
+            user.setPassword(passwordEncoder.encode(user.getPassword()));
 
             User newUser = userRepository.save(user);
 
