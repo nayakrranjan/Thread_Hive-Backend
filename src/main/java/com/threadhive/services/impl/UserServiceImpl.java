@@ -17,7 +17,6 @@ import com.threadhive.exceptions.UserNotFoundException;
 import com.threadhive.models.User;
 import com.threadhive.repositories.UserRepository;
 import com.threadhive.services.interfaces.UserService;
-import com.threadhive.config.SecurityConfig;
 
 @Service
 public class UserServiceImpl implements UserService {
