@@ -1,6 +1,6 @@
 # 
 
-# ** Thread Hive – Connect, Share, Engage!**
+# Thread Hive – Connect, Share, Engage!
 
 Thread Hive is a modern **social media platform** built with **Spring Boot (backend)** and **Angular (frontend)**, designed to bring people together through seamless interactions. Whether it’s posting updates, engaging with content, or building a network, Thread Hive makes it simple and intuitive.
 
