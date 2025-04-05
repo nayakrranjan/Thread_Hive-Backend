@@ -6,23 +6,23 @@ Thread Hive is a modern **social media platform** built with **Spring Boot (back
 
 ## **Key Features**
 
-**User Authentication** – Secure signup/login with JWT authentication.
+- **User Authentication** – Secure signup/login with JWT authentication.
 
-**Posts & Engagement** – Create, like, dislike, comment, and share posts.
+- **Posts & Engagement** – Create, like, dislike, comment, and share posts.
 
-**Follow System** – Follow/unfollow users and explore their content.
+- **Follow System** – Follow/unfollow users and explore their content.
 
-**Search & Discovery** – Find users, posts, and trending topics easily.
+- **Search & Discovery** – Find users, posts, and trending topics easily.
 
-**Profile Customization** – Set unique usernames, profile pictures, and backgrounds.
+- **Profile Customization** – Set unique usernames, profile pictures, and backgrounds.
 
 ## **Tech Stack**
 
-🔹 **Backend:** Spring Boot, PostgreSQL, JWT Authentication, RESTful APIs
+- **Backend:** Spring Boot, PostgreSQL, JWT Authentication, RESTful APIs
 
-🔹 **Frontend:** Angular, TypeScript, Bootstrap (https://github.com/nayakbarsha/Thread_Hive-Frontend)
+- **Frontend:** Angular, TypeScript, Bootstrap (https://github.com/nayakbarsha/Thread_Hive-Frontend)
 
-🔹 **Tools & Deployment:** GitHub, Docker *(Planned)*
+- **Tools & Deployment:** GitHub, Docker *(Planned)*
 
 ## **Why Thread Hive?**
 
