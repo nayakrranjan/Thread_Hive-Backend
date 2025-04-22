@@ -51,6 +51,23 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public UserDto getUserById(UUID userId) {
+
+        User foundUser = userRepository.findById(userId).orElseThrow(
+            () -> new UserNotFoundException("Server Error", new HashMap<>(Map.of("id", "User not Found")))
+        );
+
+        return new UserDto(
+            foundUser.getId(),
+            foundUser.getUsername(),
+            foundUser.getEmail(),
+            foundUser.getName(),
+            foundUser.getProfilePhoto(),
+            foundUser.getBackGroundPhoto()
+        );
+    }
+
+    @Override
     public UserDto createUser(User user) {
 
         try {
@@ -86,7 +103,7 @@ public class UserServiceImpl implements UserService {
 
             if (!errors2.isEmpty()) throw new DuplicateUserException("Duplicate Data", errors2);
 
-            user.setPassword(passwordEncoder.encode(user.getPassword()));
+            // user.setPassword(passwordEncoder.encode(user.getPassword()));
 
             User newUser = userRepository.save(user);
 
