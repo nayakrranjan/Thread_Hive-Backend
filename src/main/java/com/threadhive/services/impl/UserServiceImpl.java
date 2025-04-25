@@ -103,7 +103,7 @@ public class UserServiceImpl implements UserService {
 
             if (!errors2.isEmpty()) throw new DuplicateUserException("Duplicate Data", errors2);
 
-            // user.setPassword(passwordEncoder.encode(user.getPassword()));
+            user.setPasswordHash(passwordEncoder.encode(user.getPasswordHash()));
 
             User newUser = userRepository.save(user);
 
@@ -117,6 +117,7 @@ public class UserServiceImpl implements UserService {
         }
     }
 
+    @Override
     public UserDto updateUser(UUID userId, User updateRequest) {
 
         try {
@@ -125,7 +126,7 @@ public class UserServiceImpl implements UserService {
                 () -> new UserNotFoundException("Server Error", new HashMap<>(Map.of("id", "User not Found")))
             );
 
-            if (!updateRequest.getPassword().equals(foundUser.getPassword()))
+            if (!passwordEncoder.encode(updateRequest.getPasswordHash()).equals(foundUser.getPasswordHash()))
                 throw new AuthenticationException("Unauthorised", new HashMap<>(Map.of("password", "Invalid Password")));
 
             Map<String, String> errors = new HashMap<>();

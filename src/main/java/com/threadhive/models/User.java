@@ -26,10 +26,8 @@ public class User {
     @Email(message = "Please provide a valid email address")
     private String email;
 
-    @Pattern(regexp = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{6,}$",
-        message = "Password must be at least 6 characters long and include an uppercase letter, a lowercase letter, a number, and a special character.")
     @Column(nullable = false)  // Password should not be null
-    private String password;
+    private String passwordHash;
 
     @Column(nullable = false, length = 100)  // Name should not be null, max 100 chars
     private String name;

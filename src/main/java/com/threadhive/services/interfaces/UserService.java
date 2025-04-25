@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.UUID;
 
 import com.threadhive.dtos.UserDto;
+import com.threadhive.exceptions.UserNotFoundException;
 import com.threadhive.models.User;
 
 public interface UserService {

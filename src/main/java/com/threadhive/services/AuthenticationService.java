@@ -27,6 +27,6 @@ public class AuthenticationService {
         
         // This is the secure way to verify passwords
         log.error(rawPassword);
-        return passwordEncoder.matches(rawPassword, foundUser.getPassword());
+        return passwordEncoder.matches(rawPassword, foundUser.getPasswordHash());
     }
 }

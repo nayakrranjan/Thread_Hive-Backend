@@ -2,12 +2,9 @@ package com.threadhive.dtos;
 
 import java.util.UUID;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
 
+@Data
 @Getter @Setter @NoArgsConstructor @AllArgsConstructor @ToString
 public class UserDto {
     private UUID id;
