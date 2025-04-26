@@ -1,6 +1,5 @@
 package com.threadhive.security;
 
-import com.threadhive.services.interfaces.UserService;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -14,24 +13,22 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
+// Handles generation, validation, and extraction of authentication data from JWT tokens.
 @Component
-public class JwtTokenService {
-    UserService userService;
+public class JwtUtility {
 
+    // Secret key used for signing and verifying JWT tokens (getting from application.properties).
     @Value("${jwt.secret}")
     private String jwtSigningKey;
 
+    // JWT token expiration time in milliseconds (getting from application.properties).
     @Value("${jwt.expiration}")
     private long jwtExpirationTime;
 
-    public JwtTokenService(UserService userService) {
-        this.userService = userService;
-    }
-
-    // Check if the token is valid.
-    public boolean validateToken(String token, UserDetails userDetails) {
-        final UUID userId = extractUserId(token);
-        return userId.equals(userDetails.getId()) && !isTokenExpired(token);
+    // Checks if the token is valid.
+    public boolean validateToken(String token, CustomUserDetails customUserDetails) {
+        final String username = extractUsername(token);
+        return username.equals(customUserDetails.getUsername()) && !isTokenExpired(token);
     }
 
     // Check if token is expired.
@@ -39,18 +36,17 @@ public class JwtTokenService {
         return extractExpiration(token).before(new Date());
     }
 
-    // Generates Token
-    public String generateToken(UUID userId) {
+    public String generateToken(String username) {
         // Configure token expiry
         Date now = new Date();
         Date expiryDateTime = new Date(now.getTime() + jwtExpirationTime);
 
         // Configure user claims (roles, permissions or any custom data)
-        Map<String, Object> userClaims = new HashMap<>(); // Empty for now
+        Map<String, Object> userClaims = new HashMap<>();
 
         return Jwts.builder()
                 .setClaims(userClaims)
-                .setSubject(userId.toString())
+                .setSubject(username)
                 .setIssuedAt(now)
                 .setExpiration(expiryDateTime)
                 .signWith(getSigningKey(), SignatureAlgorithm.HS256)
@@ -64,10 +60,18 @@ public class JwtTokenService {
         return Keys.hmacShaKeyFor(keyBytes);
     }
 
-    // Get UserId from token
-    public UUID extractUserId(String token) {
+    public String extractUsername(String token) {
         Claims claims = extractAllClaims(token);
-        return UUID.fromString(claims.getSubject());
+        return claims.getSubject();
+    }
+
+    public String extractClaim(String token, String claimKey) {
+        Claims claims = Jwts.parserBuilder()
+                .setSigningKey(getSigningKey())
+                .build()
+                .parseClaimsJws(token)
+                .getBody();
+        return claims.get(claimKey, String.class);  // Get the claim by its key
     }
 
     // Get expiration from token

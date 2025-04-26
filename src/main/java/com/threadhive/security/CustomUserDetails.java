@@ -6,17 +6,27 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
 import java.util.Collection;
 import java.util.Collections;
-import java.util.List;
 import java.util.UUID;
 
-public class UserDetails implements org.springframework.security.core.userdetails.UserDetails {
-    private User user;
-    public UserDetails(User user) {
+/**
+ * Custom implementation of Spring Security's UserDetails interface.
+ * Wraps around the User entity and provides authentication information to Spring Security.
+ */
+public class CustomUserDetails implements org.springframework.security.core.userdetails.UserDetails {
+    private final User user;
+
+    /**
+     * Constructs a UserDetails object wrapping the given User entity.
+     *
+     * @param user The User entity containing user authentication details.
+     */
+    public CustomUserDetails(User user) {
         this.user = user;
     }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
+        // Returns the roles/authorities granted to the user, Currently hardcoded to ROLE_USER.
         return Collections.singletonList(new SimpleGrantedAuthority("ROLE_USER"));
     }
 

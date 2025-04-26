@@ -6,7 +6,7 @@ import lombok.*;
 
 @Data
 @Getter @Setter @NoArgsConstructor @AllArgsConstructor @ToString
-public class UserDto {
+public class UserDTO {
     private UUID id;
     private String username;
     private String email;

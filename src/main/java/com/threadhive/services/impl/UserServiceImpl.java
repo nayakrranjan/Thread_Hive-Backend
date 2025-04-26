@@ -9,7 +9,7 @@ import java.util.stream.Collectors;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import com.threadhive.dtos.UserDto;
+import com.threadhive.dtos.UserDTO;
 import com.threadhive.exceptions.AuthenticationException;
 import com.threadhive.exceptions.DuplicateUserException;
 import com.threadhive.exceptions.InvalidInputException;
@@ -32,10 +32,10 @@ public class UserServiceImpl implements UserService {
     public final String emailRegex = "^[a-zA-Z0-9_+&*-]+(?:\\.[a-zA-Z0-9_+&*-]+)*@(?:[a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,7}$";
 
     @Override
-    public List<UserDto> getAllUsers() {
+    public List<UserDTO> getAllUsers() {
 
-        List<UserDto> users = userRepository.findAll().stream().map(
-            user -> new UserDto(
+        List<UserDTO> users = userRepository.findAll().stream().map(
+            user -> new UserDTO(
                 user.getId(), 
                 user.getUsername(), 
                 user.getEmail(), 
@@ -51,13 +51,13 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserDto getUserById(UUID userId) {
+    public UserDTO getUserById(UUID userId) {
 
         User foundUser = userRepository.findById(userId).orElseThrow(
             () -> new UserNotFoundException("Server Error", new HashMap<>(Map.of("id", "User not Found")))
         );
 
-        return new UserDto(
+        return new UserDTO(
             foundUser.getId(),
             foundUser.getUsername(),
             foundUser.getEmail(),
@@ -68,7 +68,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserDto createUser(User user) {
+    public UserDTO createUser(User user) {
 
         try {
 
@@ -107,7 +107,7 @@ public class UserServiceImpl implements UserService {
 
             User newUser = userRepository.save(user);
 
-            return new UserDto(
+            return new UserDTO(
                 newUser.getId(), newUser.getUsername(), newUser.getEmail(),
                 newUser.getName(), newUser.getProfilePhoto(), newUser.getBackGroundPhoto()
             );
@@ -118,7 +118,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserDto updateUser(UUID userId, User updateRequest) {
+    public UserDTO updateUser(UUID userId, User updateRequest) {
 
         try {
 
@@ -178,7 +178,7 @@ public class UserServiceImpl implements UserService {
             
             userRepository.save(foundUser);
 
-            return new UserDto(
+            return new UserDTO(
                 foundUser.getId(),
                 foundUser.getUsername(),
                 foundUser.getEmail(),
