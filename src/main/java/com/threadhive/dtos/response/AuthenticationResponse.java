@@ -1,4 +1,4 @@
-package com.threadhive.dtos;
+package com.threadhive.dtos.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

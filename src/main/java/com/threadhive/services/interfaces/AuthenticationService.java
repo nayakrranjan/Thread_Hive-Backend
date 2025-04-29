@@ -1,8 +1,8 @@
 package com.threadhive.services.interfaces;
 
-import com.threadhive.dtos.AuthenticationRequest;
-import com.threadhive.dtos.AuthenticationResponse;
+import com.threadhive.dtos.request.AuthenticationRequest;
+import com.threadhive.dtos.response.AuthenticationResponse;
 
 public interface AuthenticationService {
-    public AuthenticationResponse authenticate(AuthenticationRequest request);
+    AuthenticationResponse authenticate(AuthenticationRequest request);
 }

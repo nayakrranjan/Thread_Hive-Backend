@@ -7,8 +7,8 @@ import java.sql.Timestamp;
 import java.util.UUID;
 
 @Entity(name = "users")
-@Getter @Setter  // Lombok annotations to generate getters and setters
-@NoArgsConstructor @AllArgsConstructor @ToString
+@Data  // Lombok annotations to generate getters and setters
+@NoArgsConstructor @AllArgsConstructor
 public class User {
 
     @Id  // Marks as Primary Key
@@ -29,14 +29,18 @@ public class User {
     @Column(nullable = false)  // Password should not be null
     private String passwordHash;
 
-    @Column(nullable = false, length = 100)  // Name should not be null, max 100 chars
-    private String name;
+    @Column(nullable = false)
+    private String firstName;
+
+    @Column(nullable = false)
+    @NotBlank(message = "Last Name is required")
+    private String lastName;
 
     @Column(length = 500)  // Stores image URL (profile photo)
     private String profilePhoto;
 
     @Column(length = 500)  // Stores image URL (background photo)
-    private String backGroundPhoto;
+    private String backgroundPhoto;
 
     @Column(updatable = false)  // Timestamp should not be updated after creation
     private Timestamp createdDate;

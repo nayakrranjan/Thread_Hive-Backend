@@ -1,7 +1,7 @@
 package com.threadhive.services.impl;
 
-import com.threadhive.dtos.AuthenticationRequest;
-import com.threadhive.dtos.AuthenticationResponse;
+import com.threadhive.dtos.request.AuthenticationRequest;
+import com.threadhive.dtos.response.AuthenticationResponse;
 import com.threadhive.exceptions.AuthenticationException;
 import com.threadhive.models.User;
 import com.threadhive.repositories.UserRepository;

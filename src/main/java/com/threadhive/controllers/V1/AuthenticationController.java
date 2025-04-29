@@ -1,9 +1,9 @@
 package com.threadhive.controllers.V1;
 
-import com.threadhive.dtos.AuthenticationRequest;
-import com.threadhive.dtos.AuthenticationResponse;
-import com.threadhive.dtos.UserDTO;
-import com.threadhive.models.User;
+import com.threadhive.dtos.request.AuthenticationRequest;
+import com.threadhive.dtos.request.UserRequest;
+import com.threadhive.dtos.response.AuthenticationResponse;
+import com.threadhive.dtos.response.UserResponse;
 import com.threadhive.services.interfaces.AuthenticationService;
 import com.threadhive.services.interfaces.UserService;
 import jakarta.validation.Valid;
@@ -23,9 +23,9 @@ public class AuthenticationController {
     private final UserService userService;
 
     @PostMapping("/sign-up")
-    public ResponseEntity<UserDTO> register(@Valid @RequestBody User user) {
-        UserDTO userDTO = userService.createUser(user);
-        return ResponseEntity.status(HttpStatus.CREATED).body(userDTO);
+    public ResponseEntity<UserResponse> register(@Valid @RequestBody UserRequest user) {
+        UserResponse newUser = userService.createUser(user);
+        return ResponseEntity.status(HttpStatus.CREATED).body(newUser);
     }
 
     @PostMapping("/login")

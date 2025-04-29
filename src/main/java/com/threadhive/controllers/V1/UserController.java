@@ -2,7 +2,8 @@ package com.threadhive.controllers.V1;
 
 import java.util.UUID;
 
-import com.threadhive.dtos.UserDTO;
+import com.threadhive.dtos.request.UserRequest;
+import com.threadhive.dtos.response.UserResponse;
 import com.threadhive.security.CustomUserDetails;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -10,13 +11,11 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.threadhive.models.User;
 import com.threadhive.repositories.UserRepository;
 import com.threadhive.services.interfaces.UserService;
 
@@ -34,7 +33,7 @@ public class UserController {
     }
 
     @GetMapping("/me")
-    public ResponseEntity<UserDTO> getCurrentUser(@AuthenticationPrincipal UserDetails userDetails) throws Exception {
+    public ResponseEntity<UserResponse> getCurrentUser(@AuthenticationPrincipal UserDetails userDetails) throws Exception {
         UUID userId = ((CustomUserDetails) userDetails).getId();
         return ResponseEntity.ok(userService.getUserById(userId));
     }
@@ -55,13 +54,8 @@ public class UserController {
         else return ResponseEntity.status(HttpStatus.FOUND).body(returnData);
     }
 
-    @PostMapping
-    public ResponseEntity<?> createUser(@Valid @RequestBody User user) {
-        return new ResponseEntity<>(userService.createUser(user), HttpStatus.CREATED);
-    }
-
     @PutMapping("/update/{id}")
-    public ResponseEntity<?> updateUser(@PathVariable UUID id, @Valid @RequestBody User user) throws Exception {
+    public ResponseEntity<?> updateUser(@PathVariable UUID id, @Valid @RequestBody UserRequest user) throws Exception {
         return new ResponseEntity<>(userService.updateUser(id, user), HttpStatus.OK);
     }
     

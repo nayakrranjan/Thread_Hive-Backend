@@ -1,10 +1,16 @@
 package com.threadhive.exceptions;
 
+import lombok.Getter;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.ResponseStatus;
+
 import java.util.HashMap;
 import java.util.Map;
 
+@Getter
+@ResponseStatus(code = HttpStatus.UNAUTHORIZED)
 public class AuthenticationException extends RuntimeException {
-    private Map<String, String> errors;
+    private final Map<String, String> errors;
 
     public AuthenticationException(String message) {
         super(message);
@@ -16,7 +22,4 @@ public class AuthenticationException extends RuntimeException {
         this.errors = errors;
     }
 
-    public Map<String, String> getErrors() {
-        return this.errors;
-    }
 }
