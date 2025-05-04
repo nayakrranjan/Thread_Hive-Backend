@@ -75,6 +75,13 @@ public class JwtRequestFilter extends OncePerRequestFilter {
 
                         // Set the authentication in the security context for the current request
                         SecurityContextHolder.getContext().setAuthentication(authToken);
+                        // Add this logging before and after setting authentication
+                        logger.info("Request URI: {}", request.getRequestURI());
+                        logger.info("Current auth: {}", SecurityContextHolder.getContext().getAuthentication());
+
+                        // After setting authentication
+                        logger.info("Set auth: {}", SecurityContextHolder.getContext().getAuthentication());
+                        logger.info("User authorities: {}", userDetails.getAuthorities());
                     }
                 }
             }

@@ -71,6 +71,26 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public UserResponse getByUsername(String username) {
+
+        User foundUser = userRepository.findByUsername(username).orElseThrow(
+                () -> new UserNotFoundException("Server Error", new HashMap<>(Map.of("username", "User not Found")))
+        );
+
+        return new UserResponse(
+                foundUser.getId(),
+                foundUser.getUsername(),
+                foundUser.getEmail(),
+                foundUser.getFirstName(),
+                foundUser.getLastName(),
+                foundUser.getProfilePhoto(),
+                foundUser.getBackgroundPhoto(),
+                foundUser.getCreatedDate(),
+                foundUser.getLastModifiedDate()
+        );
+    }
+
+    @Override
     public UserResponse createUser(UserRequest user) {
 
         Map<String, String> errors = new HashMap<>();

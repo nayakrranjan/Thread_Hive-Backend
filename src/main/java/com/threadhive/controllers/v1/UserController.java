@@ -1,4 +1,4 @@
-package com.threadhive.controllers.V1;
+package com.threadhive.controllers.v1;
 
 import java.util.UUID;
 
@@ -37,8 +37,8 @@ public class UserController {
         UUID userId = ((CustomUserDetails) userDetails).getId();
         return ResponseEntity.ok(userService.getUserById(userId));
     }
-    
-    // @GetMapping("/get")
+
+    @GetMapping("/get")
     public ResponseEntity<?> getAllUsers() {
         var returnData = userService.getAllUsers();
 
@@ -46,9 +46,17 @@ public class UserController {
         else return ResponseEntity.status(HttpStatus.FOUND).body(returnData);
     }
 
-    @GetMapping("/get/{id}")
-    public ResponseEntity<?> getUserById(@PathVariable UUID id) throws Exception {
-        var returnData = userService.getUserById(id);
+//    @GetMapping("/get/{id}")
+//    public ResponseEntity<?> getUserById(@PathVariable UUID id) throws Exception {
+//        var returnData = userService.getUserById(id);
+//
+//        if (returnData == null) return ResponseEntity.notFound().build();
+//        else return ResponseEntity.status(HttpStatus.FOUND).body(returnData);
+//    }
+
+    @GetMapping("/get/{username}")
+    public ResponseEntity<?> getUserByUsername(@PathVariable String username) throws Exception {
+        var returnData = userService.getByUsername(username);
 
         if (returnData == null) return ResponseEntity.notFound().build();
         else return ResponseEntity.status(HttpStatus.FOUND).body(returnData);

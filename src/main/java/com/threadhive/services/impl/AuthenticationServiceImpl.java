@@ -10,6 +10,8 @@ import com.threadhive.security.JwtUtility;
 import com.threadhive.services.interfaces.AuthenticationService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -22,10 +24,12 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     private final AuthenticationManager authenticationManager;
     private final JwtUtility utility;
     private final UserRepository userRepository;
+    private static final Logger logger = LoggerFactory.getLogger(AuthenticationServiceImpl.class);
 
     @Override
     public AuthenticationResponse authenticate(AuthenticationRequest request) {
         try {
+            logger.info("Hello {}",request.toString());
             Authentication authentication = authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(
                             request.getUsername(),
@@ -33,8 +37,9 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                     )
             );
 
+
             CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
-            String token = utility.generateToken(userDetails.getUsername());
+            String token = utility.generateToken(userDetails);
 
             User user = userRepository.findByUsername(userDetails.getUsername())
                     .orElseThrow(() -> new RuntimeException("User not found"));
@@ -42,7 +47,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
             return new AuthenticationResponse(token, user.getId(), user.getUsername(), user.getEmail());
 
         } catch (Exception e) {
-            throw new AuthenticationException("Invalid username/password combination");
+            throw new AuthenticationException("Invalid username or password");
         }
     }
 }

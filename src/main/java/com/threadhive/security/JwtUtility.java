@@ -5,6 +5,7 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
 import java.security.Key;
@@ -12,6 +13,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 // Handles generation, validation, and extraction of authentication data from JWT tokens.
 @Component
@@ -36,17 +38,20 @@ public class JwtUtility {
         return extractExpiration(token).before(new Date());
     }
 
-    public String generateToken(String username) {
+    public String generateToken(UserDetails userDetails) {
         // Configure token expiry
         Date now = new Date();
         Date expiryDateTime = new Date(now.getTime() + jwtExpirationTime);
 
         // Configure user claims (roles, permissions or any custom data)
         Map<String, Object> userClaims = new HashMap<>();
+        userClaims.put("authorities", userDetails.getAuthorities().stream()
+                .map(authority -> authority.getAuthority())
+                .collect(Collectors.toList()));
 
         return Jwts.builder()
                 .setClaims(userClaims)
-                .setSubject(username)
+                .setSubject(userDetails.getUsername())
                 .setIssuedAt(now)
                 .setExpiration(expiryDateTime)
                 .signWith(getSigningKey(), SignatureAlgorithm.HS256)

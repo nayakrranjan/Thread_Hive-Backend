@@ -9,6 +9,7 @@ import com.threadhive.dtos.response.UserResponse;
 public interface UserService {
     List<UserResponse> getAllUsers();
     UserResponse getUserById(UUID userId) throws Exception;
+    UserResponse getByUsername(String username) throws Exception;
     UserResponse createUser(UserRequest user);
     UserResponse updateUser(UUID userId, UserRequest updateRequest) throws Exception;
 }

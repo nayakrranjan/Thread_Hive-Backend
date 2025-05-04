@@ -1,4 +1,4 @@
-package com.threadhive.controllers.V1;
+package com.threadhive.controllers.v1;
 
 import com.threadhive.dtos.request.AuthenticationRequest;
 import com.threadhive.dtos.request.UserRequest;
@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/api/V1/auth")
+@RequestMapping("/api/v1/auth")
 @RequiredArgsConstructor
 public class AuthenticationController {
     private final AuthenticationService authService;
